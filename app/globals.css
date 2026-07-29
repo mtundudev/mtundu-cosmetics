@@ -1,0 +1,69 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-cream text-charcoal font-body antialiased;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-display text-plum;
+  }
+
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible {
+    outline: 2px solid #B08D57;
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* Ukanda wa "shades" - kipengele cha alama ya chapa, kinatumika kama
+     mstari wa rangi za vipodozi (signature swatch strip) */
+  .swatch-strip {
+    @apply flex items-center gap-2;
+  }
+
+  .swatch {
+    @apply h-3 w-3 rounded-full ring-1 ring-plum/10;
+  }
+
+  .section-eyebrow {
+    @apply text-xs uppercase tracking-[0.2em] text-rose-dark font-semibold;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-full bg-plum px-7 py-3 text-sm font-semibold text-cream transition-colors hover:bg-rose-dark;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-full border border-plum/30 px-7 py-3 text-sm font-semibold text-plum transition-colors hover:border-plum hover:bg-plum hover:text-cream;
+  }
+
+  .container-page {
+    @apply mx-auto w-full max-w-content px-6 sm:px-8 lg:px-10;
+  }
+
+  .reveal {
+    @apply opacity-0 animate-fadeUp;
+  }
+}
