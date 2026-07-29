@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { BRAND } from "@/lib/nav";
 import { CartProvider } from "@/lib/cart-context";
+import { Analytics } from "@vercel/analytics/next";
 
 const display = Fraunces({
   subsets: ["latin"],
@@ -56,6 +57,7 @@ export default function RootLayout({
           <main>{children}</main>
           <Footer />
         </CartProvider>
+        <Analytics />
       </body>
     </html>
   );
