@@ -22,22 +22,24 @@ const body = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://niacosmetics.co.tz"),
+  metadataBase: new URL("https://mtunducosmetics.co.tz"),
   title: {
-    default: `${BRAND.name} — Duka la Vipodozi Dar es Salaam`,
+    default: `${BRAND.name} — Duka la Vipodozi Mbeya & Tanzania`,
     template: `%s | ${BRAND.name}`
   },
   description:
-    "Nia Cosmetics ni duka la vipodozi la kuaminika Dar es Salaam linalouza bidhaa za urembo, ngozi na nywele zenye ubora wa hali ya juu.",
+    `${BRAND.name} ni duka la vipodozi la kuaminika Mwanjerwa Mbeya linalouza bidhaa asilia za urembo, utunzaji wa ngozi na nywele zenye ubora wa hali ya juu.`,
   keywords: [
     "vipodozi",
     "duka la vipodozi",
     "cosmetics Tanzania",
     "urembo",
-    "makeup Dar es Salaam"
+    "makeup Mbeya",
+    "Mtundu Cosmetics",
+    "skincare Mbeya"
   ],
   openGraph: {
-    title: `${BRAND.name} — Duka la Vipodozi Dar es Salaam`,
+    title: `${BRAND.name} — Duka la Vipodozi Mbeya & Tanzania`,
     description: BRAND.tagline,
     locale: "sw_TZ",
     type: "website"

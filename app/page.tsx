@@ -37,8 +37,8 @@ export default function HomePage() {
 
         <div className="relative aspect-[4/5] w-full overflow-hidden rounded-3xl">
           <Image
-            src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=1000&q=80"
-            alt="Bidhaa za vipodozi zikiwa zimepangwa vizuri"
+            src="/products/makeup_artist_model.jpg"
+            alt="Mwanamke mrembo mwenye mapambo ya kifahari kutoka Mtundu Cosmetics"
             fill
             priority
             sizes="(min-width: 768px) 500px, 100vw"
@@ -53,7 +53,7 @@ export default function HomePage() {
           {[
             { title: "Bidhaa Halisi", text: "Tunauza bidhaa asili tu, zenye ubora uliothibitishwa." },
             { title: "Ushauri wa Kitaalamu", text: "Timu yetu inakusaidia kuchagua rangi na bidhaa sahihi." },
-            { title: "Uwasilishaji wa Haraka", text: "Agiza leo, pokea ndani ya siku 1-3 Dar es Salaam." }
+            { title: "Uwasilishaji wa Haraka", text: "Agiza leo, pokea ndani ya siku 1-2 Mbeya na mikoa yote ya Tanzania." }
           ].map((item) => (
             <div key={item.title} className="rounded-2xl bg-cream p-6 shadow-sm">
               <h3 className="text-lg font-semibold text-plum">{item.title}</h3>

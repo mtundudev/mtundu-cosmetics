@@ -180,7 +180,7 @@ export default function CartPageClient() {
       { align: "center" }
     );
 
-    doc.save(`Invoice_NiaCosmetics_${Date.now()}.pdf`);
+    doc.save(`Invoice_MtunduCosmetics_${Date.now()}.pdf`);
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {

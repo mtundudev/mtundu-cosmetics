@@ -5,13 +5,13 @@ import { BRAND } from "@/lib/nav";
 
 export const metadata: Metadata = {
   title: "Kuhusu Sisi",
-  description: `Fahamu historia na dhamira ya ${BRAND.name}, duka la vipodozi la kuaminika Dar es Salaam.`
+  description: `Fahamu historia na dhamira ya ${BRAND.name}, duka la vipodozi la kuaminika Mbeya na Tanzania nzima.`
 };
 
 const VALUES = [
   { title: "Ubora", text: "Kila bidhaa tunayouza imepitia uchunguzi wa ubora kabla ya kufika dukani." },
   { title: "Uaminifu", text: "Tunauza bidhaa halisi tu, hakuna nakala au bidhaa feki." },
-  { title: "Jumuiya", text: "Tunawekeza katika mafunzo ya urembo kwa vijana wa kike wa Dar es Salaam." }
+  { title: "Jumuiya", text: "Tunawekeza katika mafunzo ya urembo na kuwawezesha wanawake na vijana kujiamini." }
 ];
 
 export default function AboutPage() {
@@ -20,14 +20,14 @@ export default function AboutPage() {
       <SectionHeading
         eyebrow="Kuhusu Sisi"
         title={`Hadithi ya ${BRAND.name}`}
-        description="Tulianzishwa mwaka 2019 kwa lengo moja: kuhakikisha kila mwanamke wa Kitanzania anapata bidhaa za vipodozi zenye ubora, kwa bei nafuu na ushauri sahihi."
+        description="Tulianzishwa kwa lengo moja: kuhakikisha kila mwanamke na mteja anapata bidhaa za vipodozi zenye ubora wa kimataifa, kwa bei nafuu na ushauri sahihi."
       />
 
       <div className="mt-12 grid gap-12 md:grid-cols-2 md:items-center">
         <div className="relative aspect-[4/3] overflow-hidden rounded-3xl">
           <Image
-            src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1000&q=80"
-            alt="Duka la vipodozi la Nia Cosmetics"
+            src="/products/Aesthetic_Makeup_Collection_Flatlay.jpg"
+            alt={`Duka la vipodozi la ${BRAND.name}`}
             fill
             sizes="(min-width: 768px) 500px, 100vw"
             className="object-cover"
@@ -36,13 +36,13 @@ export default function AboutPage() {
 
         <div className="space-y-4 text-charcoal/80">
           <p>
-            {BRAND.name} ilianza kama duka dogo Kariakoo, likiuza bidhaa chache za msingi za ngozi.
-            Leo, tumekuwa moja ya maduka yanayoaminika zaidi ya vipodozi jijini Dar es Salaam,
-            tukihudumia maelfu ya wateja kila mwezi.
+            {BRAND.name} ilianza Mwanjerwa jijini Mbeya, ikilenga kuleta mapinduzi chanya kwenye
+            sekta ya urembo kwa kutoa bidhaa salama na bora za ngozi, uso na nywele.
+            Leo, tumekuwa kitovu cha uaminifu kwa maelfu ya wateja mkoani Mbeya na kote nchini.
           </p>
           <p>
             Tunaamini kuwa urembo wa kweli unaanzia kwenye kujiamini. Ndiyo maana kila mteja
-            anayeingia dukani kwetu anapata ushauri wa dhati, si mauzo tu.
+            anayeagiza au kuwasiliana nasi anapata ushauri wa dhati wa kitaalamu unaomfaa binafsi.
           </p>
         </div>
       </div>
