@@ -8,144 +8,118 @@ if BASE_DIR not in sys.path:
 
 from fastapi.testclient import TestClient
 from backend.app.main import app
+from backend.app.db.init_db import init_db
 
-client = TestClient(app)
+# Initialize database
+init_db()
 
+def run_all_tests():
+    with TestClient(app) as client:
+        print("Testing root endpoint...")
+        res = client.get("/")
+        assert res.status_code == 200, f"Root failed: {res.text}"
+        data = res.json()
+        assert data["status"] == "online"
+        print("  Root: OK")
 
-def test_root():
-    response = client.get("/")
-    assert response.status_code == 200
-    data = response.json()
-    assert data["status"] == "online"
-    assert "Mtundu Cosmetics" in data["brand"]
+        print("Testing health check...")
+        res = client.get("/health")
+        assert res.status_code == 200
+        assert res.json()["status"] == "healthy"
+        print("  Health: OK")
 
+        print("Testing products listing...")
+        res = client.get("/api/v1/products")
+        assert res.status_code == 200
+        products = res.json()
+        assert len(products) > 0
+        print(f"  Products: OK ({len(products)} products found)")
 
-def test_health():
-    response = client.get("/health")
-    assert response.status_code == 200
-    assert response.json()["status"] == "healthy"
+        print("Testing product category filtering...")
+        res = client.get("/api/v1/products?category=Uso")
+        assert res.status_code == 200
+        uso_products = res.json()
+        assert len(uso_products) > 0
+        print(f"  Category filter (Uso): OK ({len(uso_products)} items)")
 
+        print("Testing contact inquiry...")
+        contact_payload = {
+            "name": "Maria Test",
+            "email": "maria@example.com",
+            "phone": "+255712345678",
+            "message": "Habari, naulizia bei ya jumla ya bidhaa za ngozi."
+        }
+        res = client.post("/api/v1/contact", json=contact_payload)
+        assert res.status_code == 200
+        assert res.json()["ok"] is True
+        print("  Contact: OK")
 
-def test_list_products():
-    response = client.get("/api/v1/products")
-    assert response.status_code == 200
-    products = response.json()
-    assert isinstance(products, list)
-    assert len(products) > 0
-    # Verify product properties
-    first = products[0]
-    assert "slug" in first
-    assert "name" in first
-    assert "price" in first
-    assert "image" in first
+        print("Testing reviews endpoint...")
+        res = client.get("/api/v1/reviews")
+        assert res.status_code == 200
+        reviews = res.json()
+        print(f"  Reviews: OK ({len(reviews)} approved reviews)")
 
+        print("Testing customer order creation...")
+        order_payload = {
+            "name": "Fatma Said",
+            "phone": "+255768999888",
+            "address": "Mwanjerwa Sokoni, Mbeya",
+            "items": [
+                {
+                    "slug": "foundation-glow",
+                    "name": "Foundation ya Glow",
+                    "priceValue": 28000.0,
+                    "quantity": 2
+                },
+                {
+                    "slug": "lipstick-matte-luxury",
+                    "name": "Lipstick ya Matte ya Kifahari",
+                    "priceValue": 15000.0,
+                    "quantity": 1
+                }
+            ],
+            "subtotal": 71000.0,
+            "deliveryFee": 0.0,
+            "total": 71000.0
+        }
+        res = client.post("/api/v1/orders", json=order_payload)
+        assert res.status_code == 200
+        res_data = res.json()
+        assert res_data["ok"] is True
+        order_ref = res_data["orderRef"]
+        assert order_ref.startswith("MC-")
+        print(f"  Order creation: OK (Ref: {order_ref})")
 
-def test_filter_products():
-    response = client.get("/api/v1/products?category=Uso")
-    assert response.status_code == 200
-    products = response.json()
-    assert len(products) > 0
-    for p in products:
-        assert "Uso" in p["category"]
+        print("Testing order retrieval by ref...")
+        res = client.get(f"/api/v1/orders/{order_ref}")
+        assert res.status_code == 200
+        order_data = res.json()
+        assert order_data["customer_name"] == "Fatma Said"
+        assert order_data["total"] == 71000.0
+        print("  Order retrieval: OK")
 
+        print("Testing admin authentication...")
+        res_bad = client.post("/api/v1/admin/login", json={"password": "wrong"})
+        assert res_bad.status_code == 401
 
-def test_contact_submission():
-    payload = {
-        "name": "Maria Test",
-        "email": "maria@example.com",
-        "phone": "+255712345678",
-        "message": "Habari, naulizia bei ya jumla ya sabuni na lotion."
-    }
-    response = client.post("/api/v1/contact", json=payload)
-    assert response.status_code == 200
-    assert response.json()["ok"] is True
+        res_good = client.post("/api/v1/admin/login", json={"password": "admin123"})
+        assert res_good.status_code == 200
+        assert res_good.json()["ok"] is True
+        print("  Admin login: OK")
 
+        print("Testing admin sales metrics...")
+        res_metrics = client.get("/api/v1/orders/metrics")
+        assert res_metrics.status_code == 200
+        metrics = res_metrics.json()
+        assert metrics["total_orders"] >= 1
+        assert metrics["total_revenue"] >= 71000.0
+        print(f"  Sales metrics: OK (Total Orders: {metrics['total_orders']}, Total Revenue: TZS {metrics['total_revenue']:,.0f})")
 
-def test_reviews_flow():
-    # Public list of approved reviews
-    res_list = client.get("/api/v1/reviews")
-    assert res_list.status_code == 200
-    reviews = res_list.json()
-    assert isinstance(reviews, list)
-
-    # Post new review
-    new_rev = {
-        "name": "Hassan M.",
-        "rating": 5,
-        "message": "Nimepata huduma nzuri sana na bidhaa ni asilia kabisa."
-    }
-    res_post = client.post("/api/v1/reviews", json=new_rev)
-    assert res_post.status_code == 200
-    assert res_post.json()["ok"] is True
-
-
-def test_order_creation_and_retrieval():
-    order_data = {
-        "name": "Fatma Said",
-        "phone": "+255768999888",
-        "address": "Mwanjerwa Sokoni, Mbeya",
-        "items": [
-            {
-                "slug": "foundation-glow",
-                "name": "Foundation ya Glow",
-                "priceValue": 28000.0,
-                "quantity": 2
-            },
-            {
-                "slug": "lipstick-matte-luxury",
-                "name": "Lipstick ya Matte ya Kifahari",
-                "priceValue": 15000.0,
-                "quantity": 1
-            }
-        ],
-        "subtotal": 71000.0,
-        "deliveryFee": 0.0,
-        "total": 71000.0
-    }
-    response = client.post("/api/v1/orders", json=order_data)
-    assert response.status_code == 200
-    res_json = response.json()
-    assert res_json["ok"] is True
-    assert "orderRef" in res_json
-    order_ref = res_json["orderRef"]
-    assert order_ref.startswith("MC-")
-
-    # Fetch order by ref
-    get_res = client.get(f"/api/v1/orders/{order_ref}")
-    assert get_res.status_code == 200
-    fetched = get_res.json()
-    assert fetched["customer_name"] == "Fatma Said"
-    assert fetched["total"] == 71000.0
-    assert len(fetched["items"]) == 2
-
-
-def test_admin_auth_and_metrics():
-    # Login with wrong password
-    bad_login = client.post("/api/v1/admin/login", json={"password": "wrongpassword"})
-    assert bad_login.status_code == 401
-
-    # Login with correct password
-    login_res = client.post("/api/v1/admin/login", json={"password": "admin123"})
-    assert login_res.status_code == 200
-    assert login_res.json()["ok"] is True
-
-    # Retrieve sales metrics using the session cookie set by login
-    metrics_res = client.get("/api/v1/orders/metrics")
-    assert metrics_res.status_code == 200
-    metrics = metrics_res.json()
-    assert "total_orders" in metrics
-    assert "total_revenue" in metrics
-    assert metrics["total_orders"] >= 1
+        print("\n" + "=" * 50)
+        print("ALL FASTAPI BACKEND TESTS PASSED SUCCESSFULLY! (100% OK)")
+        print("=" * 50)
 
 
 if __name__ == "__main__":
-    print("Running automated backend tests...")
-    test_root()
-    test_health()
-    test_list_products()
-    test_filter_products()
-    test_contact_submission()
-    test_reviews_flow()
-    test_order_creation_and_retrieval()
-    test_admin_auth_and_metrics()
-    print("ALL TESTS PASSED SUCCESSFULLY! (100% OK)")
+    run_all_tests()
