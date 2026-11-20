@@ -1,11 +1,12 @@
 from typing import List, Dict, Any
-from fastapi import APIRouter, Depends, HTTPException, status, Request
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from backend.app.db.session import get_db
 from backend.app.core.security import require_admin, is_authenticated_admin
 from backend.app.schemas.review import ReviewCreate, ReviewOut, ReviewUpdate
 from backend.app.services.review_service import (
     create_review as service_create_review,
+    send_review_notification as service_send_review_notification,
     get_approved_reviews as service_get_approved_reviews,
     get_all_reviews as service_get_all_reviews,
     update_review_approval as service_update_review_approval,
@@ -34,13 +35,23 @@ def list_reviews(
 
 
 @router.post("", status_code=status.HTTP_200_OK)
-def submit_review(review_in: ReviewCreate, db: Session = Depends(get_db)) -> Dict[str, Any]:
+def submit_review(
+    review_in: ReviewCreate,
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db),
+) -> Dict[str, Any]:
     """
     Submit customer review.
     Stored with approved=False pending admin moderation.
     """
     try:
-        service_create_review(db=db, review_in=review_in)
+        review = service_create_review(db=db, review_in=review_in)
+        background_tasks.add_task(
+            service_send_review_notification,
+            name=review.name,
+            rating=review.rating,
+            message=review.message,
+        )
         return {
             "ok": True,
             "message": "Asante kwa maoni yako! Yatatokea hapa baada ya kupitiwa na timu yetu."

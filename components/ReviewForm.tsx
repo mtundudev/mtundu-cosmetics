@@ -2,10 +2,13 @@
 
 import { FormEvent, useState } from "react";
 import { StarPicker } from "./StarRating";
+import { API_BASE_URL, getApiError } from "@/lib/api";
+import { useSitePreferences } from "@/lib/preferences";
 
 type Status = "idle" | "loading" | "success" | "error";
 
 export default function ReviewForm() {
+  const { t, language } = useSitePreferences();
   const [rating, setRating] = useState(5);
   const [status, setStatus] = useState<Status>("idle");
   const [errorMessage, setErrorMessage] = useState("");
@@ -22,22 +25,28 @@ export default function ReviewForm() {
 
     if (name.length < 2 || message.length < 5) {
       setStatus("error");
-      setErrorMessage("Tafadhali jaza jina na ujumbe wenye maana.");
+      setErrorMessage(
+        language === "sw"
+          ? "Tafadhali jaza jina na ujumbe wenye maana."
+          : "Please enter your name and a meaningful review."
+      );
       return;
     }
 
     try {
-      const response = await fetch("/api/reviews", {
+      const response = await fetch(`${API_BASE_URL}/reviews`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, rating, message })
       });
 
-      const result = (await response.json()) as { ok: boolean; error?: string };
+      const result = (await response.json()) as { ok: boolean };
 
       if (!response.ok || !result.ok) {
         setStatus("error");
-        setErrorMessage(result.error ?? "Imeshindikana kutuma maoni yako. Jaribu tena baadaye.");
+        setErrorMessage(
+          getApiError(result, "Imeshindikana kutuma maoni yako. Jaribu tena baadaye.")
+        );
         return;
       }
 
@@ -54,7 +63,7 @@ export default function ReviewForm() {
     <form onSubmit={handleSubmit} className="space-y-5" noValidate>
       <div>
         <label htmlFor="name" className="mb-2 block text-sm font-medium text-plum">
-          Jina Lako
+          {language === "sw" ? "Jina Lako" : "Your Name"}
         </label>
         <input
           id="name"
@@ -63,18 +72,20 @@ export default function ReviewForm() {
           required
           minLength={2}
           className="w-full rounded-xl border border-plum/20 bg-cream px-4 py-3 text-sm text-charcoal outline-none focus:border-plum"
-          placeholder="Jina lako"
+          placeholder={language === "sw" ? "Jina lako" : "Your name"}
         />
       </div>
 
       <div>
-        <p className="mb-2 block text-sm font-medium text-plum">Kiwango cha Kuridhika</p>
+        <p className="mb-2 block text-sm font-medium text-plum">
+          {language === "sw" ? "Kiwango cha Kuridhika" : "Your Rating"}
+        </p>
         <StarPicker value={rating} onChange={setRating} />
       </div>
 
       <div>
         <label htmlFor="message" className="mb-2 block text-sm font-medium text-plum">
-          Maoni Yako
+          {language === "sw" ? "Maoni Yako" : "Your Review"}
         </label>
         <textarea
           id="message"
@@ -83,17 +94,21 @@ export default function ReviewForm() {
           minLength={5}
           rows={4}
           className="w-full rounded-xl border border-plum/20 bg-cream px-4 py-3 text-sm text-charcoal outline-none focus:border-plum"
-          placeholder="Andika maoni yako kuhusu bidhaa au huduma zetu..."
+          placeholder={
+            language === "sw"
+              ? "Andika maoni yako kuhusu bidhaa au huduma zetu..."
+              : "Share your experience with our products or service..."
+          }
         />
       </div>
 
       <button type="submit" disabled={status === "loading"} className="btn-primary w-full sm:w-auto">
-        {status === "loading" ? "Inatuma..." : "Tuma Maoni"}
+        {status === "loading" ? t("form.sending") : t("form.reviewSubmit")}
       </button>
 
       {status === "success" && (
         <p role="status" className="rounded-xl bg-green-50 px-4 py-3 text-sm text-green-700">
-          Asante kwa maoni yako! Yatatokea hapa baada ya kupitiwa na kukubaliwa.
+          {t("page.reviewFormSuccess")}
         </p>
       )}
 

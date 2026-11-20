@@ -1,9 +1,12 @@
+import logging
 from typing import List, Optional
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
 from backend.app.models.review import Review
 from backend.app.schemas.review import ReviewCreate
 from backend.app.core.email import send_review_email
+
+logger = logging.getLogger(__name__)
 
 
 def create_review(db: Session, review_in: ReviewCreate) -> Review:
@@ -17,17 +20,15 @@ def create_review(db: Session, review_in: ReviewCreate) -> Review:
     db.commit()
     db.refresh(db_review)
 
-    # Attempt sending alert email to admin
-    try:
-        send_review_email(
-            name=db_review.name,
-            rating=db_review.rating,
-            message=db_review.message
-        )
-    except Exception as exc:
-        print(f"[Review Email Error] {exc}")
-
     return db_review
+
+
+def send_review_notification(name: str, rating: int, message: str) -> None:
+    try:
+        if not send_review_email(name=name, rating=rating, message=message):
+            logger.error("Review notification email was not sent for %s.", name)
+    except Exception:
+        logger.exception("Could not send review notification email for %s.", name)
 
 
 def get_approved_reviews(db: Session, skip: int = 0, limit: int = 50) -> List[Review]:

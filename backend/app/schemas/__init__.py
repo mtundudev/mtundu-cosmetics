@@ -4,6 +4,7 @@ from backend.app.schemas.order import OrderItemSchema, OrderCreate, OrderOut, Sa
 from backend.app.schemas.review import ReviewCreate, ReviewOut, ReviewUpdate
 from backend.app.schemas.contact import ContactCreate, ContactOut
 from backend.app.schemas.product import ProductCreate, ProductOut, ProductUpdate
+from backend.app.schemas.service import ServiceCreate, ServiceOut, ServiceUpdate
 
 __all__ = [
     "AdminLogin",
@@ -20,5 +21,8 @@ __all__ = [
     "ContactOut",
     "ProductCreate",
     "ProductOut",
-    "ProductUpdate"
+    "ProductUpdate",
+    "ServiceCreate",
+    "ServiceOut",
+    "ServiceUpdate"
 ]

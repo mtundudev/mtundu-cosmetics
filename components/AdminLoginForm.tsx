@@ -1,10 +1,13 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { useRouter } from "next/navigation";
+import { API_BASE_URL, getApiError } from "@/lib/api";
 
-export default function AdminLoginForm() {
-  const router = useRouter();
+type AdminLoginFormProps = {
+  onSuccess: () => void;
+};
+
+export default function AdminLoginForm({ onSuccess }: AdminLoginFormProps) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -15,21 +18,22 @@ export default function AdminLoginForm() {
     setError("");
 
     try {
-      const response = await fetch("/api/admin/login", {
+      const response = await fetch(`${API_BASE_URL}/admin/login`, {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password })
       });
 
-      const result = (await response.json()) as { ok: boolean; error?: string };
+      const result = (await response.json()) as { ok: boolean };
 
       if (!response.ok || !result.ok) {
-        setError(result.error ?? "Imeshindikana kuingia.");
+        setError(getApiError(result, "Imeshindikana kuingia."));
         setLoading(false);
         return;
       }
 
-      router.refresh();
+      onSuccess();
     } catch {
       setError("Hitilafu ya mtandao. Jaribu tena.");
       setLoading(false);

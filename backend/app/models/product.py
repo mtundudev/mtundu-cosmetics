@@ -12,6 +12,7 @@ class Product(Base):
     category = Column(String(80), nullable=False, index=True)
     price = Column(String(50), nullable=False)
     price_value = Column(Float, nullable=False, default=0.0)
+    discount_percent = Column(Integer, nullable=False, default=0)
     description = Column(Text, nullable=False)
     image = Column(String(255), nullable=False)
     is_active = Column(Boolean, default=True, nullable=False)

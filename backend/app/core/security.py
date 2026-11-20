@@ -1,6 +1,8 @@
+import hashlib
+import hmac
 import secrets
-from typing import Optional
-from fastapi import Request, HTTPException, status, Depends
+import time
+from fastapi import Request, HTTPException, status
 from backend.app.core.config import settings
 
 
@@ -8,28 +10,48 @@ def verify_password(plain_password: str, expected_password: str) -> bool:
     """Safely compare passwords using constant-time comparison."""
     if not plain_password or not expected_password:
         return False
-    return secrets.compare_digest(plain_password.strip(), expected_password.strip())
+    return secrets.compare_digest(
+        plain_password.encode("utf-8"),
+        expected_password.encode("utf-8"),
+    )
+
+
+def create_admin_session() -> str:
+    expires_at = str(int(time.time()) + settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60)
+    signature = hmac.new(
+        settings.SECRET_KEY.encode("utf-8"),
+        expires_at.encode("ascii"),
+        hashlib.sha256,
+    ).hexdigest()
+    return f"{expires_at}.{signature}"
 
 
 def is_authenticated_admin(request: Request) -> bool:
     """
-    Check if the incoming request has valid admin credentials:
-    1. Cookie: admin_session == 'authenticated' or matching SECRET_KEY
-    2. Header: Authorization: Bearer <ADMIN_PASSWORD> or <SECRET_KEY>
+    Check whether the request contains a valid, signed admin session cookie.
     """
-    # Check session cookie
     cookie_val = request.cookies.get(settings.ADMIN_SESSION_COOKIE)
-    if cookie_val in ("authenticated", settings.SECRET_KEY):
-        return True
+    if not cookie_val or not settings.SECRET_KEY:
+        return False
 
-    # Check Authorization header
-    auth_header = request.headers.get("Authorization")
-    if auth_header and auth_header.startswith("Bearer "):
-        token = auth_header.split(" ", 1)[1].strip()
-        if secrets.compare_digest(token, settings.ADMIN_PASSWORD) or secrets.compare_digest(token, settings.SECRET_KEY):
-            return True
+    try:
+        expires_at, signature = cookie_val.split(".", 1)
+        if not expires_at.isascii() or not expires_at.isdecimal():
+            return False
+        if int(expires_at) <= int(time.time()):
+            return False
+    except (ValueError, TypeError):
+        return False
 
-    return False
+    if len(signature) != 64 or any(character not in "0123456789abcdef" for character in signature):
+        return False
+
+    expected_signature = hmac.new(
+        settings.SECRET_KEY.encode("utf-8"),
+        expires_at.encode("ascii"),
+        hashlib.sha256,
+    ).hexdigest()
+    return secrets.compare_digest(signature, expected_signature)
 
 
 def require_admin(request: Request) -> bool:

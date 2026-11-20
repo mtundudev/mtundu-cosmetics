@@ -4,24 +4,22 @@ export type NavLink = {
 };
 
 export const NAV_LINKS: NavLink[] = [
-  { href: "/", label: "Home" },
-  { href: "/kuhusu", label: "About us" },
-  { href: "/bidhaa", label: "Products" },
-  { href: "/huduma", label: "Services" },
-  { href: "/picha", label: "Picture" },
-  { href: "/maoni", label: "Comments" },
-  { href: "/wasiliana", label: "Wasiliana Nasi" },
-  { href: "/kikapu", label: "My Order" }
+  { href: "/", label: "Nyumbani" },
+  { href: "/kuhusu", label: "Kuhusu Sisi" },
+  { href: "/bidhaa", label: "Bidhaa" },
+  { href: "/huduma", label: "Huduma" },
+  { href: "/picha", label: "Picha" },
+  { href: "/maoni", label: "Maoni" },
+  { href: "/wasiliana", label: "Wasiliana Nasi" }
 ];
 
 export const BRAND = {
-  name: "Mtundu Cosmetics",
+  name: "Omega Cosmetics",
   tagline: "Urembo wa asili, ujasiri wa kila siku",
-  phone: "+255 769752523",
-  whatsapp: "+255769752523",
-  email: "dottomtundu9@gmail.com",
-  address: "Mwanjerwa, Mbeya",
-  website: "https://mtunducosmetics.co.tz"
+  phone: "+255625618209",
+  whatsapp: "+255670320714",
+  email: "Johnhandrick83@gmail.com",
+  address: "Mwanjerwa, Mbeya"
 };
 
 export const BRAND_COLORS = {

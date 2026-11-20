@@ -7,7 +7,6 @@ class AdminLogin(BaseModel):
 
 class TokenResponse(BaseModel):
     ok: bool = True
-    token: str = "authenticated"
     message: str = "Login imefanikiwa"
 
 

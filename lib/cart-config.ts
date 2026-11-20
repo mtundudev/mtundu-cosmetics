@@ -5,9 +5,9 @@ export const CART_CONFIG = {
 };
 
 export const PAYMENT_INFO = {
-  mpesaNumber: "+255 769752523",
+  mpesaNumber: "+255625618209",
   mpesaName: "dotto mtundu",
-  tigopesaNumber: "+255 705669903",
+  tigopesaNumber: "+255670320714",
   tigopesaName: "dotto mtundu"
 };
 

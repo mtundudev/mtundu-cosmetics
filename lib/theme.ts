@@ -1,5 +1,5 @@
 /**
- * Mtundu Cosmetics - Brand Identity & Design System
+ * Omega Cosmetics - Brand Identity & Design System
  * --------------------------------------------------
  * Color Palette, Typography & Brand Styling Constants
  */

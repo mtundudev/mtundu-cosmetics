@@ -9,10 +9,16 @@
 
   body {
     @apply bg-cream text-charcoal font-body antialiased;
+    background-image: radial-gradient(ellipse at 12% 0%, rgba(232, 198, 204, 0.14), transparent 34%);
   }
 
   h1, h2, h3, h4 {
     @apply font-display text-plum;
+  }
+
+  ::selection {
+    background: rgba(156, 79, 99, 0.2);
+    color: #3B1F2B;
   }
 
   a:focus-visible,
@@ -36,6 +42,107 @@
   }
 }
 
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --rose-velvet-page: #251a22;
+  --rose-velvet-surface: #31222c;
+  --rose-velvet-raised: #3c2935;
+  --rose-velvet-text: #f7eaf0;
+  --rose-velvet-muted: #d3c0c9;
+  --rose-velvet-heading: #ffe4ed;
+  --rose-velvet-accent: #e5a5b8;
+  --rose-velvet-border: rgba(238, 204, 218, 0.18);
+}
+
+html[data-theme="dark"] body {
+  background-color: var(--rose-velvet-page);
+  background-image: none;
+  color: var(--rose-velvet-text);
+}
+
+html[data-theme="dark"] h1,
+html[data-theme="dark"] h2,
+html[data-theme="dark"] h3,
+html[data-theme="dark"] h4 {
+  color: var(--rose-velvet-heading);
+}
+
+html[data-theme="dark"] .text-plum,
+html[data-theme="dark"] [class*="text-plum/"] {
+  color: var(--rose-velvet-heading);
+}
+
+html[data-theme="dark"] .text-charcoal,
+html[data-theme="dark"] [class*="text-charcoal/"] {
+  color: var(--rose-velvet-muted);
+}
+
+html[data-theme="dark"] .text-rose-dark {
+  color: var(--rose-velvet-accent);
+}
+
+html[data-theme="dark"] .text-gold,
+html[data-theme="dark"] [class*="text-gold/"] {
+  color: #dfc08a;
+}
+
+html[data-theme="dark"] [class*="bg-cream"],
+html[data-theme="dark"] [class*="bg-white"],
+html[data-theme="dark"] [class*="bg-rose-light"],
+html[data-theme="dark"] [class*="bg-rose-subtle"] {
+  background-color: var(--rose-velvet-surface);
+}
+
+html[data-theme="dark"] [class*="bg-plum"] {
+  background-color: #4a2d3d;
+}
+
+html[data-theme="dark"] header {
+  background-color: rgba(43, 29, 38, 0.96);
+  border-color: var(--rose-velvet-border);
+}
+
+html[data-theme="dark"] footer {
+  background-color: #30202a;
+}
+
+html[data-theme="dark"] [class*="border-plum/"] {
+  border-color: var(--rose-velvet-border);
+}
+
+html[data-theme="dark"] .btn-primary {
+  background-color: #9c5b77;
+  color: #fff7fa;
+}
+
+html[data-theme="dark"] .btn-primary:hover {
+  background-color: #b36e89;
+}
+
+html[data-theme="dark"] .btn-secondary {
+  border-color: #9f7086;
+  color: var(--rose-velvet-heading);
+}
+
+html[data-theme="dark"] .btn-secondary:hover {
+  border-color: #9c5b77;
+  background-color: #9c5b77;
+  color: #fff7fa;
+}
+
+html[data-theme="dark"] input,
+html[data-theme="dark"] textarea,
+html[data-theme="dark"] select {
+  border-color: var(--rose-velvet-border);
+  background-color: var(--rose-velvet-raised);
+  color: var(--rose-velvet-text);
+}
+
+html[data-theme="dark"] input::placeholder,
+html[data-theme="dark"] textarea::placeholder {
+  color: #c3aeb8;
+}
+
 @layer components {
   /* Ukanda wa "shades" - kipengele cha alama ya chapa, kinatumika kama
      mstari wa rangi za vipodozi (signature swatch strip) */
@@ -48,19 +155,33 @@
   }
 
   .section-eyebrow {
-    @apply text-xs uppercase tracking-[0.2em] text-rose-dark font-semibold;
+    @apply text-[10px] uppercase tracking-[0.22em] text-rose-dark font-semibold;
+  }
+
+  .section-eyebrow::before {
+    content: "";
+    display: inline-block;
+    width: 1.25rem;
+    height: 1px;
+    margin-right: 0.65rem;
+    vertical-align: middle;
+    background-color: currentColor;
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center rounded-full bg-plum px-7 py-3 text-sm font-semibold text-cream transition-colors hover:bg-rose-dark;
+    @apply inline-flex items-center justify-center rounded-full bg-plum px-7 py-3 text-sm font-semibold text-cream shadow-sm shadow-plum/10 transition duration-300 hover:-translate-y-0.5 hover:bg-rose-dark hover:shadow-lg hover:shadow-plum/15;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center rounded-full border border-plum/30 px-7 py-3 text-sm font-semibold text-plum transition-colors hover:border-plum hover:bg-plum hover:text-cream;
+    @apply inline-flex items-center justify-center rounded-full border border-plum/25 bg-white/60 px-7 py-3 text-sm font-semibold text-plum transition duration-300 hover:-translate-y-0.5 hover:border-plum hover:bg-plum hover:text-cream;
   }
 
   .container-page {
-    @apply mx-auto w-full max-w-content px-6 sm:px-8 lg:px-10;
+    @apply mx-auto w-full max-w-content px-5 sm:px-8 lg:px-10;
+  }
+
+  .editorial-hero {
+    background-image: radial-gradient(ellipse at 18% 0%, rgba(197, 168, 121, 0.16), transparent 40%);
   }
 
   .reveal {

@@ -5,7 +5,10 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { BRAND } from "@/lib/nav";
 import { CartProvider } from "@/lib/cart-context";
+import { SitePreferencesProvider } from "@/lib/preferences";
+import WhatsAppButton from "@/components/WhatsAppButton";
 import { Analytics } from "@vercel/analytics/next";
+import { SITE_URL } from "@/lib/site-url";
 
 const display = Fraunces({
   subsets: ["latin"],
@@ -22,7 +25,7 @@ const body = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://mtunducosmetics.co.tz"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: `${BRAND.name} — Duka la Vipodozi Mbeya & Tanzania`,
     template: `%s | ${BRAND.name}`
@@ -35,7 +38,7 @@ export const metadata: Metadata = {
     "cosmetics Tanzania",
     "urembo",
     "makeup Mbeya",
-    "Mtundu Cosmetics",
+    "Omega Cosmetics",
     "skincare Mbeya"
   ],
   openGraph: {
@@ -54,11 +57,14 @@ export default function RootLayout({
   return (
     <html lang="sw">
       <body className={`${display.variable} ${body.variable}`}>
-        <CartProvider>
-          <Navbar />
-          <main>{children}</main>
-          <Footer />
-        </CartProvider>
+        <SitePreferencesProvider>
+          <CartProvider>
+            <Navbar />
+            <main>{children}</main>
+            <Footer />
+            <WhatsAppButton />
+          </CartProvider>
+        </SitePreferencesProvider>
         <Analytics />
       </body>
     </html>

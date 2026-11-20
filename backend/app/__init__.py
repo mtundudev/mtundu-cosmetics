@@ -1,2 +1,2 @@
-"""Mtundu Cosmetics Python Backend Application Package."""
+"""Omega Cosmetics Python Backend Application Package."""
 __version__ = "1.0.0"

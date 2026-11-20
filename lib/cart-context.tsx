@@ -14,6 +14,8 @@ export type CartItem = {
   slug: string;
   name: string;
   priceValue: number;
+  originalPriceValue?: number;
+  discountPercent?: number;
   quantity: number;
 };
 

@@ -21,3 +21,7 @@ class ContactOut(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class ContactReplyUpdate(BaseModel):
+    replied: bool
