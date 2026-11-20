@@ -18,6 +18,10 @@ def production_settings(**overrides):
         "SMTP_HOST": "smtp.example.com",
         "SMTP_USER": "shop@example.com",
         "SMTP_PASS": "smtp-app-password",
+        "MEDIA_STORAGE": "supabase",
+        "SUPABASE_URL": "https://project.supabase.co",
+        "SUPABASE_SERVICE_ROLE_KEY": "server-only-test-key",
+        "SUPABASE_STORAGE_BUCKET": "omega-media",
     }
     values.update(overrides)
     return Settings(**values)
@@ -39,6 +43,8 @@ class ProductionSettingsTests(unittest.TestCase):
             {"SMTP_PASS": ""},
             {"CORS_ORIGINS": ["http://localhost:3000"]},
             {"PAYMENT_MODE": "selcom"},
+            {"MEDIA_STORAGE": "local"},
+            {"SUPABASE_SERVICE_ROLE_KEY": ""},
         ]
         for overrides in invalid_overrides:
             with self.subTest(overrides=overrides):
