@@ -22,8 +22,9 @@ app = FastAPI(
     docs_url="/docs",
     redoc_url="/redoc"
 )
-settings.MEDIA_ROOT.mkdir(parents=True, exist_ok=True)
-app.mount("/uploads", StaticFiles(directory=settings.MEDIA_ROOT), name="uploads")
+if settings.MEDIA_STORAGE == "local":
+    settings.MEDIA_ROOT.mkdir(parents=True, exist_ok=True)
+    app.mount("/uploads", StaticFiles(directory=settings.MEDIA_ROOT), name="uploads")
 
 # Configure CORS Middleware for Next.js frontend
 app.add_middleware(

@@ -23,6 +23,7 @@ def run_all_tests():
     settings.SECRET_KEY = "test-secret-key-for-admin-sessions"
     settings.COOKIE_SECURE = False
     settings.PAYMENT_MODE = "test"
+    settings.MEDIA_STORAGE = "local"
     settings.SMTP_HOST = ""
     settings.SMTP_USER = ""
     settings.SMTP_PASS = ""
@@ -321,6 +322,25 @@ def run_all_tests():
         )
         assert upload.status_code == 200
         assert upload.json()["path"].startswith("/uploads/profiles/")
+        with (
+            patch.object(settings, "MEDIA_STORAGE", "supabase"),
+            patch.object(settings, "SUPABASE_URL", "https://project.supabase.co"),
+            patch.object(settings, "SUPABASE_SERVICE_ROLE_KEY", "fake-service-role-key"),
+            patch.object(settings, "SUPABASE_STORAGE_BUCKET", "omega-media"),
+            patch("backend.app.api.endpoints.media.requests.post") as storage_upload,
+        ):
+            storage_upload.return_value.raise_for_status.return_value = None
+            remote_upload = client.post(
+                "/api/v1/admin/media/profile",
+                files={"file": ("profile.png", image_bytes, "image/png")},
+            )
+        assert remote_upload.status_code == 200
+        remote_path = remote_upload.json()["path"]
+        assert remote_path.startswith(
+            "https://project.supabase.co/storage/v1/object/public/omega-media/profiles/"
+        )
+        upload_call = storage_upload.call_args
+        assert upload_call.kwargs["headers"]["Authorization"] == "Bearer fake-service-role-key"
         print("  Admin profile and image upload: OK")
         print("  Admin login: OK")
 

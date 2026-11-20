@@ -1,5 +1,7 @@
+from urllib.parse import quote
 from uuid import uuid4
 
+import requests
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 
 from backend.app.core.config import settings
@@ -16,6 +18,44 @@ IMAGE_TYPES = {
         lambda content: content.startswith(b"RIFF") and content[8:12] == b"WEBP",
     ),
 }
+
+
+def store_in_supabase(content: bytes, content_type: str, folder: str, filename: str) -> str:
+    if not (
+        settings.SUPABASE_URL
+        and settings.SUPABASE_SERVICE_ROLE_KEY
+        and settings.SUPABASE_STORAGE_BUCKET
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Hifadhi ya picha za Supabase haijasanidiwa.",
+        )
+
+    bucket = quote(settings.SUPABASE_STORAGE_BUCKET, safe="")
+    object_path = quote(f"{folder}/{filename}", safe="/")
+    storage_url = f"{settings.SUPABASE_URL.rstrip('/')}/storage/v1/object"
+    headers = {
+        "Authorization": f"Bearer {settings.SUPABASE_SERVICE_ROLE_KEY}",
+        "apikey": settings.SUPABASE_SERVICE_ROLE_KEY,
+        "Content-Type": content_type,
+        "x-upsert": "false",
+    }
+
+    try:
+        response = requests.post(
+            f"{storage_url}/{bucket}/{object_path}",
+            data=content,
+            headers=headers,
+            timeout=20,
+        )
+        response.raise_for_status()
+    except requests.RequestException as exc:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail="Picha haikuweza kuhifadhiwa kwenye Supabase Storage.",
+        ) from exc
+
+    return f"{storage_url}/public/{bucket}/{object_path}"
 
 
 async def store_image(file: UploadFile, folder: str) -> str:
@@ -40,8 +80,22 @@ async def store_image(file: UploadFile, folder: str) -> str:
         )
 
     target_folder = settings.MEDIA_ROOT / folder
-    target_folder.mkdir(parents=True, exist_ok=True)
     filename = f"{uuid4().hex}{extension}"
+    if settings.MEDIA_STORAGE == "supabase":
+        return store_in_supabase(
+            content,
+            file.content_type or "",
+            folder,
+            filename,
+        )
+
+    if settings.MEDIA_STORAGE != "local":
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Hifadhi ya picha haijasanidiwa.",
+        )
+
+    target_folder.mkdir(parents=True, exist_ok=True)
     target_path = target_folder / filename
     target_path.write_bytes(content)
     return f"/uploads/{folder}/{filename}"

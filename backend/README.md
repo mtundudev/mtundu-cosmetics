@@ -130,7 +130,7 @@ Checkout huhifadhi oda kwenye FastAPI kisha huonyesha kitufe cha kuituma kupitia
 
 Kwa deployment ya production, chagua `PAYMENT_MODE=selcom` baada ya merchant account kuthibitishwa, au `manual` hadi hapo. Weka `APP_ENV=production`, `COOKIE_SECURE=true`, tumia `SECRET_KEY` na `ADMIN_PASSWORD` salama, na tumia HTTPS. Hali ya `test` haipaswi kutumiwa kupokea fedha halisi.
 
-Picha za bidhaa na wasifu huhifadhiwa chini ya `MEDIA_ROOT` (chaguomsingi `backend/uploads`). Hosting ya production lazima iweke directory hii kwenye persistent, writable storage; filesystem ya muda inaweza kupoteza picha baada ya restart/redeploy.
+Kwa maendeleo, `MEDIA_STORAGE=local` huhifadhi picha chini ya `MEDIA_ROOT`. Production hutumia Supabase Storage kupitia bucket ya umma ya picha za bidhaa na wasifu; weka `MEDIA_STORAGE=supabase`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, na `SUPABASE_STORAGE_BUCKET`. Backend hurejesha public image URL na haihitaji Render disk. Usitumie service role key kwenye frontend wala kuiweka Git.
 
 Arifa za oda hutumwa kwa `ORDER_NOTIFICATION_EMAIL`; ikiwa imeachwa tupu, backend hutumia `CONTACT_TO_EMAIL`. Sanidi `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, na `SMTP_PASS` ili kutuma barua. Email ya oda ina jedwali la bidhaa na jumla lenye rangi za chapa. Arifa za oda, mawasiliano na maoni hutumwa baada ya API kujibu ili SMTP isicheleweshe wateja; tumia foleni ya kazi za kudumu ikiwa mfumo unahitaji majaribio ya kutuma tena baada ya server kuzimika.
 
@@ -140,8 +140,8 @@ Arifa za oda hutumwa kwa `ORDER_NOTIFICATION_EMAIL`; ikiwa imeachwa tupu, backen
 - Weka `APP_ENV=production`, `PAYMENT_MODE=manual` au `selcom`, `ADMIN_PASSWORD` yenye angalau herufi 12, `SECRET_KEY` yenye angalau herufi 32, na `COOKIE_SECURE=true`.
 - Weka `CORS_ORIGINS` kuwa origin halisi za frontend pekee, zote zikiwa HTTPS. Ikiwa frontend na API ziko kwenye tovuti tofauti, tumia `COOKIE_SAMESITE=none` pamoja na `COOKIE_SECURE=true`.
 - Weka SMTP credentials halisi. Ikiwa utatumia Selcom, weka vendor ID na credentials zote za merchant kwenye secret manager ya hosting; usiweke kwenye frontend.
-- Tumia database ya PostgreSQL yenye `postgresql+psycopg://...` au SQLite kwenye persistent disk. PostgreSQL driver imejumuishwa kwenye `requirements.txt`.
-- Elekeza `MEDIA_ROOT` kwenye persistent writable volume; data ya picha isihifadhiwe kwenye filesystem ya muda.
+- Tumia Supabase PostgreSQL connection string kupitia `DATABASE_URL`; URL za kawaida za `postgres://`/`postgresql://` hubadilishwa kutumia `psycopg`.
+- Weka `MEDIA_STORAGE=supabase`, Supabase project URL, service-role key na bucket name kwenye Render. Tengeneza bucket hiyo kwenye Supabase Storage na iwe public kwa kusoma picha za bidhaa.
 - Build frontend kwa `npm run build`, kisha endesha kwa `npm run start`. Endesha API bila reload kwa `uvicorn backend.app.main:app --host 0.0.0.0 --port ${PORT:-8000}`.
 - Hakiki `/health`, admin login, upload ya picha, uundaji wa oda, arifa za barua pepe na malipo ya production kabla ya kutangaza duka.
 
@@ -151,6 +151,7 @@ Mipangilio ya production hukataliwa backend ikikosa HTTPS, siri za admin, cookie
 
 - Vercel: tumia root directory ya project, build command `npm run build`, na weka `NEXT_PUBLIC_API_BASE_URL=https://<api-service>.onrender.com/api/v1` pamoja na `NEXT_PUBLIC_SITE_URL=https://<store>.vercel.app`.
 - Render: tengeneza Web Service kutoka root ya repository; build command ni `pip install -r backend/requirements.txt`, start command ni `uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT`, na health check path ni `/health`.
-- Unganisha Render PostgreSQL kupitia `DATABASE_URL`. URL za kawaida za `postgres://`/`postgresql://` hubadilishwa moja kwa moja kutumia `psycopg`.
-- Weka `FRONTEND_PUBLIC_URL`, `API_PUBLIC_URL`, `CORS_ORIGINS` kwa domains halisi, `COOKIE_SAMESITE=none`, `COOKIE_SECURE=true`, na `MEDIA_ROOT=/var/data/uploads`. Render inahitaji persistent disk iliyowekwa kwenye `/var/data` ili kuhifadhi picha baada ya redeploy.
+- Unganisha Supabase PostgreSQL kupitia `DATABASE_URL` (tumia connection string ya session pooler ikiwa direct connection haipatikani kutoka Render).
+- Weka `MEDIA_STORAGE=supabase`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, na `SUPABASE_STORAGE_BUCKET=omega-media` kwenye Render. Unda bucket ya `omega-media` kwenye Supabase na uruhusu public reads kwa picha.
+- Weka `FRONTEND_PUBLIC_URL`, `API_PUBLIC_URL`, `CORS_ORIGINS` kwa domains halisi pamoja na `COOKIE_SAMESITE=none` na `COOKIE_SECURE=true`. Render disk haihitajiki kwa picha.
 - Anza na `PAYMENT_MODE=manual`; washa `selcom` tu baada ya merchant account na credentials halisi kuthibitishwa. Weka credentials zote, SMTP na admin password kama secret environment variables kwenye Render; usizihifadhi kwenye Git.

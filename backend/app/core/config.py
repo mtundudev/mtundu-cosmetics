@@ -27,6 +27,10 @@ class Settings(BaseSettings):
         default_factory=lambda: Path(__file__).resolve().parents[2] / "uploads",
         description="Persistent directory for uploaded product and admin images"
     )
+    MEDIA_STORAGE: str = "local"
+    SUPABASE_URL: str = ""
+    SUPABASE_SERVICE_ROLE_KEY: str = ""
+    SUPABASE_STORAGE_BUCKET: str = "omega-media"
     APP_ENV: str = "development"
     PAYMENT_MODE: str = "manual"
     SELCOM_BASE_URL: str = ""
@@ -72,6 +76,8 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def validate_payment_configuration(self):
+        if self.MEDIA_STORAGE not in {"local", "supabase"}:
+            raise ValueError("MEDIA_STORAGE must be local or supabase.")
         if self.PAYMENT_MODE not in {"manual", "test", "selcom"}:
             raise ValueError("PAYMENT_MODE must be manual, test, or selcom.")
         if self.APP_ENV == "production" and self.PAYMENT_MODE == "test":
@@ -101,6 +107,17 @@ class Settings(BaseSettings):
                 raise ValueError("Production CORS_ORIGINS must contain only HTTPS origins.")
             if not all((self.SMTP_HOST, self.SMTP_USER, self.SMTP_PASS)):
                 raise ValueError("SMTP_HOST, SMTP_USER, and SMTP_PASS are required in production.")
+            if self.MEDIA_STORAGE != "supabase":
+                raise ValueError("MEDIA_STORAGE must be supabase in production.")
+            if not (
+                self.SUPABASE_URL.startswith("https://")
+                and self.SUPABASE_SERVICE_ROLE_KEY
+                and self.SUPABASE_STORAGE_BUCKET
+            ):
+                raise ValueError(
+                    "SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, and SUPABASE_STORAGE_BUCKET "
+                    "are required for production media storage."
+                )
             if self.PAYMENT_MODE == "selcom" and not all(
                 (
                     self.SELCOM_BASE_URL,
