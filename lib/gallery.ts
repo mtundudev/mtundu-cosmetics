@@ -5,27 +5,27 @@ export type GalleryImage = {
 
 export const GALLERY_IMAGES: GalleryImage[] = [
   {
-    src: "https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?auto=format&fit=crop&w=900&q=80",
-    alt: "Mpangilio wa bidhaa za vipodozi dukani"
+    src: "/products/Aesthetic_Makeup_Collection_Flatlay.jpg",
+    alt: "Mkusanyiko wa kifahari wa vipodozi na brashi za mapambo Omega Cosmetics"
   },
   {
-    src: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=900&q=80",
-    alt: "Brashi za mapambo ya uso"
+    src: "/products/makeup_artist_model.jpg",
+    alt: "Mteja aliyefanyiwa mapambo ya uso na wataalamu wa Omega Cosmetics"
   },
   {
-    src: "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&w=900&q=80",
-    alt: "Lipstick za rangi mbalimbali"
+    src: "/products/pinte.jpg",
+    alt: "Lipstick za kifahari za rangi mbalimbali za kuvutia"
   },
   {
-    src: "https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?auto=format&fit=crop&w=900&q=80"  ,
-    alt: "Mteja akifanyiwa mapambo ya uso"
+    src: "/products/Bakina.jpg",
+    alt: "Eyeshadow palette ya rangi 12 za mapambo ya kisasa"
   },
   {
-    src: "https://images.unsplash.com/photo-1583001809873-a128495da465?auto=format&fit=crop&w=900&q=80",
-    alt: "Bidhaa za utunzaji wa ngozi zikiwa mezani"
+    src: "/products/Skincare.jpg",
+    alt: "Seti kamili ya bidhaa za utunzaji wa ngozi na uso"
   },
   {
-    src: "https://images.unsplash.com/photo-1598440947619-2c35bc9430c4?auto=format&fit=crop&w=900&q=80",
-    alt: "Eyeshadow palette yenye rangi za kifahari"
+    src: "/products/Kuzeyhidayet25___Freepik.jpg",
+    alt: "Bidhaa za asili za utunzaji wa ngozi na kinga dhidi ya jua"
   }
 ];

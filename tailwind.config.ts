@@ -3,20 +3,36 @@ import type { Config } from "tailwindcss";
 const config: Config = {
   content: [
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./components/**/*.{js,ts,jsx,tsx,mdx}"
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./lib/**/*.{js,ts,jsx,tsx,mdx}"
   ],
   theme: {
     extend: {
       colors: {
-        cream: "#FBF6F1",
-        plum: "#3B1F2B",
+        cream: {
+          DEFAULT: "#FBF6F1",
+          muted: "#F3ECE4"
+        },
+        plum: {
+          DEFAULT: "#3B1F2B",
+          dark: "#2A141E",
+          light: "#522C3D"
+        },
         rose: {
           DEFAULT: "#C9788A",
           light: "#E8C6CC",
+          subtle: "#F6ECEE",
           dark: "#9C4F63"
         },
-        gold: "#B08D57",
-        charcoal: "#2B2320"
+        gold: {
+          DEFAULT: "#B08D57",
+          light: "#C5A879",
+          dark: "#8F6E3B"
+        },
+        charcoal: {
+          DEFAULT: "#2B2320",
+          muted: "#5A4D49"
+        }
       },
       fontFamily: {
         display: ["var(--font-display)"],

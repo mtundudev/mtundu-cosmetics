@@ -1,9 +1,18 @@
 # dependencies
 /node_modules
+/.venv
+**/__pycache__/
+*.py[cod]
 
 # next.js
 /.next/
 /out/
+
+# Local databases and uploaded media; production must use persistent storage.
+*.db
+*.sqlite
+*.sqlite3
+/backend/uploads/
 
 # production
 /build

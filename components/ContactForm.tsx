@@ -1,10 +1,13 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { API_BASE_URL, getApiError } from "@/lib/api";
+import { useSitePreferences } from "@/lib/preferences";
 
 type Status = "idle" | "loading" | "success" | "error";
 
 export default function ContactForm() {
+  const { t, language } = useSitePreferences();
   const [status, setStatus] = useState<Status>("idle");
   const [errorMessage, setErrorMessage] = useState<string>("");
 
@@ -24,17 +27,17 @@ export default function ContactForm() {
     };
 
     try {
-      const response = await fetch("/api/contact", {
+      const response = await fetch(`${API_BASE_URL}/contact`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       });
 
-      const result = (await response.json()) as { ok: boolean; error?: string };
+      const result = (await response.json()) as { ok: boolean };
 
       if (!response.ok || !result.ok) {
         setStatus("error");
-        setErrorMessage(result.error ?? "Imeshindikana kutuma ujumbe. Jaribu tena.");
+        setErrorMessage(getApiError(result, "Imeshindikana kutuma ujumbe. Jaribu tena."));
         return;
       }
 
@@ -51,7 +54,7 @@ export default function ContactForm() {
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
           <label htmlFor="name" className="mb-2 block text-sm font-medium text-plum">
-            Jina Kamili
+            {t("form.name")}
           </label>
           <input
             id="name"
@@ -60,13 +63,13 @@ export default function ContactForm() {
             required
             minLength={2}
             className="w-full rounded-xl border border-plum/20 bg-cream px-4 py-3 text-sm text-charcoal outline-none focus:border-plum"
-            placeholder="Jina lako"
+            placeholder={language === "sw" ? "Jina lako" : "Your name"}
           />
         </div>
 
         <div>
           <label htmlFor="email" className="mb-2 block text-sm font-medium text-plum">
-            Barua Pepe
+            {t("form.email")}
           </label>
           <input
             id="email"
@@ -81,7 +84,7 @@ export default function ContactForm() {
 
       <div>
         <label htmlFor="phone" className="mb-2 block text-sm font-medium text-plum">
-          Namba ya Simu (si lazima)
+          {t("form.phone")} ({language === "sw" ? "si lazima" : "optional"})
         </label>
         <input
           id="phone"
@@ -94,7 +97,7 @@ export default function ContactForm() {
 
       <div>
         <label htmlFor="message" className="mb-2 block text-sm font-medium text-plum">
-          Ujumbe
+          {t("form.message")}
         </label>
         <textarea
           id="message"
@@ -108,12 +111,12 @@ export default function ContactForm() {
       </div>
 
       <button type="submit" disabled={status === "loading"} className="btn-primary w-full sm:w-auto">
-        {status === "loading" ? "Inatuma..." : "Tuma Ujumbe"}
+        {status === "loading" ? t("form.sending") : t("form.submit")}
       </button>
 
       {status === "success" && (
         <p role="status" className="rounded-xl bg-green-50 px-4 py-3 text-sm text-green-700">
-          Asante! Ujumbe wako umetumwa. Tutakujibu hivi karibuni.
+          {t("page.contactFormSuccess")}
         </p>
       )}
 

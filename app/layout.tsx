@@ -5,7 +5,10 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { BRAND } from "@/lib/nav";
 import { CartProvider } from "@/lib/cart-context";
+import { SitePreferencesProvider } from "@/lib/preferences";
+import WhatsAppButton from "@/components/WhatsAppButton";
 import { Analytics } from "@vercel/analytics/next";
+import { SITE_URL } from "@/lib/site-url";
 
 const display = Fraunces({
   subsets: ["latin"],
@@ -22,22 +25,24 @@ const body = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://niacosmetics.co.tz"),
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: `${BRAND.name} — Duka la Vipodozi Dar es Salaam`,
+    default: `${BRAND.name} — Duka la Vipodozi Mbeya & Tanzania`,
     template: `%s | ${BRAND.name}`
   },
   description:
-    "Nia Cosmetics ni duka la vipodozi la kuaminika Dar es Salaam linalouza bidhaa za urembo, ngozi na nywele zenye ubora wa hali ya juu.",
+    `${BRAND.name} ni duka la vipodozi la kuaminika Mwanjerwa Mbeya linalouza bidhaa asilia za urembo, utunzaji wa ngozi na nywele zenye ubora wa hali ya juu.`,
   keywords: [
     "vipodozi",
     "duka la vipodozi",
     "cosmetics Tanzania",
     "urembo",
-    "makeup Dar es Salaam"
+    "makeup Mbeya",
+    "Omega Cosmetics",
+    "skincare Mbeya"
   ],
   openGraph: {
-    title: `${BRAND.name} — Duka la Vipodozi Dar es Salaam`,
+    title: `${BRAND.name} — Duka la Vipodozi Mbeya & Tanzania`,
     description: BRAND.tagline,
     locale: "sw_TZ",
     type: "website"
@@ -52,11 +57,14 @@ export default function RootLayout({
   return (
     <html lang="sw">
       <body className={`${display.variable} ${body.variable}`}>
-        <CartProvider>
-          <Navbar />
-          <main>{children}</main>
-          <Footer />
-        </CartProvider>
+        <SitePreferencesProvider>
+          <CartProvider>
+            <Navbar />
+            <main>{children}</main>
+            <Footer />
+            <WhatsAppButton />
+          </CartProvider>
+        </SitePreferencesProvider>
         <Analytics />
       </body>
     </html>
